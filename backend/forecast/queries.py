@@ -38,13 +38,10 @@ def get_three_days_total():
         FROM oneglass.forecasts f
         ORDER BY location, date
     )
-    SELECT location, cou, running_total, MIN(date) AS start_date, MIN(date) + interval '1 day' AS end_date
+    SELECT location, cou, running_total, MIN(date) AS start_date
     FROM cth
     GROUP BY location, running_total, cou;
     """
-
-
-    # WHERE running_total < 1000 AND cou = 3
 
     with connection.cursor() as cursor:
         cursor.execute(query)

@@ -26,5 +26,5 @@ def temp_for_day(date, date_temp_dict):
 def filter_by_conditions(item):
     running_total = item.get('running_total', 0)
     running_count = item.get('running_count', 0)
-    all_below_five = item.get('running_count', False)
+    all_below_five = item.get('all_below_five', False)
     return (running_total < 1000 and running_count == 3) or (all_below_five == True and running_total <= 1500)

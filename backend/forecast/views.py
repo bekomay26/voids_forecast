@@ -7,7 +7,6 @@ from datetime import date
 
 def fourteen_days(request):
     temp_elements = 'datetime,name,tempmax,tempmin,temp,dew,humidity,snow'
-    # temp_data = get_temperature('Hamburg', temp_elements)
     loc_data = next_14_days_sales()
 
     df = pd.DataFrame(loc_data)

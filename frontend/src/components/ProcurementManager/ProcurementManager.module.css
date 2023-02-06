@@ -1,0 +1,88 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+}
+
+.header_div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.page_header {
+    font-size: 18px;
+    margin-right: 30px;
+}
+
+.places {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.places p {
+    margin-right: 20px;
+}
+
+.placeButton:not(:last-child) {
+    margin-right: 10px;
+}
+
+.placeButton {
+    background-color: #ffffff;
+    border: 1px solid black;
+    color: black;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.closeDays {
+    padding-bottom: 20px;
+}
+
+.closeDays p {
+    margin-bottom: 15px;
+}
+
+.closeRow {
+    display: flex;
+    border-bottom: 1px solid black;
+    padding: 5px;
+}
+
+.closeCell {
+    width: 150px;
+}
+
+.closeCell:first-child {
+    width: 200px;
+}
+
+.closeCell span {
+    margin-bottom: 2px;
+    font-size: 10px;
+}
+
+.closeCell p {
+    font-size: 14px;
+}
+
+.btn {
+    border: none;
+    background-color: black;
+    color: #ffffff;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn:first-child {
+    margin-right: 20px;
+}

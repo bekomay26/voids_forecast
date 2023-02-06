@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import dayjs from 'dayjs'
 import styles from './App.module.css';
 import {getDirectorData, getProcurementData} from "./pages/Login/dataApi";
+import Director from "./components/Director";
+import ProcurementManager from "./components/ProcurementManager";
 
 function App() {
   const [selectedPage, setSelectedPage] = useState("login");
@@ -13,6 +16,7 @@ function App() {
   const [procurementData, setProcurementData] = useState([]);
   const [selectedProcurementLocation, setSelectedProcurementLocation] = useState("");
   const [allLocationsProcurementData, setAllLocationsProcurementData] = useState({});
+  const [closedDays, setClosedDays] = useState([]);
 
 
   const fetchDirectorData = async () => {
@@ -75,8 +79,34 @@ function App() {
     setSelectedProcurementLocation(pla)
   }
 
-  const onClickCloseStore = () => {
+  const onClickCloseStore = (item) => {
+    const newClosedDays = closedDays.concat(item['date_range'])
 
+    // Note: closed days should ideally be stored in a database
+    const newDirectorData = directorData.map(dir => {
+      const newDir = {...dir}
+
+      const firstClosedDay = dayjs(item['date_range'][0], 'YYYY-MM-DD')
+      const dayBeforeCloseStart = firstClosedDay.add(-1, 'day').format('YYYY-MM-DD')
+      const lastClosedDay = dayjs(item['date_range'][2], 'YYYY-MM-DD')
+      const dayAfterCloseEnd = lastClosedDay.add(1, 'day').format('YYYY-MM-DD')
+      // closed days plus day before and day after
+      const closedBoundDates = [dayBeforeCloseStart, ...item['date_range'], dayAfterCloseEnd]
+
+      if(dir['date_range'][0] === item['date_range'][0] && dir['running_total'] === item['running_total']) {
+        // if this is the closed date range,
+        newDir['closed'] = true
+        return newDir
+      }
+      else if (dir['date_range']?.some(ele => closedBoundDates.includes(ele) )) {
+        // If one of the dates is already closed, or comes a day before or after
+        newDir['cant_close'] = true
+        return newDir
+      }
+      return dir
+    })
+    setDirectorData(newDirectorData)
+    setClosedDays(newClosedDays)
   }
 
   if(loading) {
@@ -89,79 +119,25 @@ function App() {
 
   else if(selectedPage === 'proc') {
     return (
-      <div className={styles.container}>
-      <div className={styles.header_div}>
-        <p className={styles.page_header}>Procurement manager</p>
-        <button className={styles.btn} onClick={()=>onClickUser('login')}>back</button>
-      </div>
-        <div className={styles.places}>
-          <p>Places</p>
-          {procurementLocations.map(pla => (
-            <button className={styles.placeButton} onClick={()=>onClickProcurementPlace(pla)}>
-              {pla}
-            </button>
-          ))}
-        </div>
-        <div className={styles.closeDays}>
-          <p>{`Forecast in ${selectedProcurementLocation}`}</p>
-          {procurementData.map((item, index) => (
-            <div className={styles.closeRow} key={index}>
-              <div className={styles.closeCell}>
-                <span>Date</span>
-                <p>{item['date']}</p>
-              </div>
-              <div className={styles.closeCell}>
-                <span>Temperature</span>
-                <p>{`${item['temp'] || '--'}`}</p>
-              </div>
-              <div className={styles.closeCell}>
-                <span>Sales</span>
-                <p>{`${item['sales'].toFixed(2) || '--'}`}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ProcurementManager
+        onClickUser={onClickUser}
+        procurementData={procurementData}
+        procurementLocations={procurementLocations}
+        selectedProcurementLocation={selectedProcurementLocation}
+        onClickProcurementPlace={onClickProcurementPlace}
+      />
     )
   }
   else if(selectedPage === 'director') {
     return (
-      <div className={styles.container}>
-      <div className={styles.header_div}>
-        <p className={styles.page_header}>Managing director</p>
-        <button className={styles.btn} onClick={()=>onClickUser('login')}>back</button>
-      </div>
-
-        <div className={styles.places}>
-          <p>Places</p>
-          {directorLocations.map(pla => (
-            <button className={styles.placeButton} onClick={()=>onClickDirectorPlace(pla)}>
-              {pla}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.closeDays}>
-          <p>{`Days to close in ${selectedLocation}`}</p>
-          {directorData.map((item, index) => (
-            <div className={styles.closeRow} key={index}>
-              <div className={styles.closeCell}>
-                <span>Close Days</span>
-                <p>{`${item['date_range'][0]} - ${item['date_range'][2] || ''}`}</p>
-              </div>
-              <div className={styles.closeCell}>
-                <span>Temperature</span>
-                <p>{`${item['temp_range'] || '--'}`}</p>
-              </div>
-              <div className={styles.closeCell}>
-                <span>Sales total for 3 days</span>
-                <p>{`${item['running_total'].toFixed(2) || '--'}`}</p>
-              </div>
-              <button className={styles.placeButton} onClick={()=>onClickCloseStore()}>Close</button>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Director
+        directorData={directorData}
+        directorLocations={directorLocations}
+        onClickCloseStore={onClickCloseStore}
+        onClickDirectorPlace={onClickDirectorPlace}
+        onClickUser={onClickUser}
+        selectedLocation={selectedLocation}
+        />
     )
   }
   return (

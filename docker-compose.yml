@@ -1,0 +1,17 @@
+services:
+  server:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/:/code
+    ports:
+      - 8000:8000
+  client:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    # Environment variables for startup script
+    # container will use these variables
+    # to start the container with these defined variables.
+    env_file:
+      - ./frontend/.env.local

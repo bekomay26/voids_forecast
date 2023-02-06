@@ -5,15 +5,22 @@ MVP for OneGlass
 
 In the project directory, you can:
 
-*Run API*
+### Using docker
+- Run `docker compose up`
+- Open `http://localhost:3000/` in your browser
+
+### Without docker
+
+**Run API**
 - `cd backend`
 - `pip install -r requirements.txt`
 - `python manage.py runserver`
 
-*Run client*
+**Run client**
 - `cd frontend`
 - `yarn install`
 - `yarn start`
+- Open `http://localhost:3000/` in your browser
 
 
 
